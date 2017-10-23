@@ -32,6 +32,7 @@ class TiebaPostSpider(scrapy.spiders.Spider):
         }
     }
 
+    # 这个爬虫用来保存每个出现了数字和省份的主题帖，见 AskScoreToUniversityItem
     def parse(self, response):
         content = response.body
         if re_tieba_all_tiezi.search(content):
@@ -85,6 +86,7 @@ class TiebaPostSpider(scrapy.spiders.Spider):
             # Baidu against spider solution: request again
             yield scrapy.Request(response.urljoin(''), callback=self.parse)
 
+    # 解析主题帖创建时间
     def parse_tiezi_time_1(self, response):
         posts = response.css("div[class^='p_postlist'] > div")
         if len(posts) == 0:
@@ -109,6 +111,7 @@ class TiebaPostSpider(scrapy.spiders.Spider):
         item_info['date'] = item['date']
         yield item_info
 
+    # 虽然也是解析创建时间，但是这个解析函数针对（部分）个人贴吧
     def parse_tiezi_time_2(self, response):
         posts = response.css("div[class^='l_post l_post_bright j_l_post clearfix']")
         if len(posts) == 0:
@@ -129,6 +132,7 @@ class TiebaPostSpider(scrapy.spiders.Spider):
         item_info['date'] = item['date']
         yield item_info
 
+    # 解析主题帖的每个帖子
     def parse_tiezi(self, response):
         # filename = response.url.split("/")[-1]
         # with open(filename, 'wb') as f:
@@ -178,6 +182,7 @@ class TiebaPostSpider(scrapy.spiders.Spider):
                 next_page = response.urljoin(href[0].encode('GB18030'))
                 yield scrapy.Request(next_page, callback=self.parse_tiezi)
 
+    # 解析每个楼层的楼中楼
     def parse_lzl(self, response, out_floor, main_url):
 
         # Collect this page's all users' words and print them
@@ -213,7 +218,3 @@ class TiebaPostSpider(scrapy.spiders.Spider):
                     index = response.url.find("&pn=")
                     next_url = response.url[:index + 4] + href[1:]
                     yield scrapy.Request(next_url, callback=self.parse_lzl)
-
-
-class Error(Exception):
-    pass

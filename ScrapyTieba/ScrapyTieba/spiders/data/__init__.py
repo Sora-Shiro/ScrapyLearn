@@ -6,6 +6,7 @@ sys.path.append('D:/Work/PythonProject/ScrapyLearn/ScrapyTieba/ScrapyTieba')
 from spiders.secret.a import DATABASE_USER_PASSWORD
 
 # Open database
+# Schema: sorashiro, User:sora
 db = MySQLdb.connect(
     host="localhost",
     user="sora",
