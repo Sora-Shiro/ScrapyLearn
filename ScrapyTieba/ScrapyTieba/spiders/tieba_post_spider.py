@@ -49,6 +49,8 @@ class TiebaPostSpider(scrapy.spiders.Spider):
                 a = tiezi.css("div[class^='threadlist_title pull_left j_th_tit '] > a[class^='j_th_tit ']")
                 title = a.css("::text").extract()[0].strip()
                 href = "http://tieba.baidu.com" + a.css("::attr(href)").extract()[0].strip()
+                if u'考研' in title:
+                    continue
                 list_content_emoji = []
                 if re_emoji.search(title):
                     list_content_emoji.append(re_emoji.findall(title))
@@ -68,6 +70,7 @@ class TiebaPostSpider(scrapy.spiders.Spider):
                         if re_num.search(title):
                             author_n_time = tiezi.css("div[class^='threadlist_author pull_right']")
                             author = author_n_time.css("span[class^='frs-author-name-wrap'] > a::text").extract()[0].strip()
+
                             item = {
                                 'title': title,
                                 'province': pro,
